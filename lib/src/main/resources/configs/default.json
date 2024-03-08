@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "id": "F",
+      "patterns": [
+        {
+          "pattern": "F"
+        },
+        {
+          "pattern": "f"
+        }
+      ],
+      "responses": [
+        {
+          "response": "F"
+        }
+      ]
+    }
+  ]
+}
