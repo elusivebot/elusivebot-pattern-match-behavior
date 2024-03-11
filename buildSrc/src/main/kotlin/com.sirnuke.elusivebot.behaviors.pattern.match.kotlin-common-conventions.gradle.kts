@@ -1,10 +1,22 @@
-plugins {
-    id("org.jetbrains.kotlin.jvm")
-}
-
 repositories {
     mavenCentral()
+    mavenLocal()
 }
+
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("com.diffplug.spotless")
+}
+
+spotless {
+    kotlin {
+        diktat()
+    }
+    kotlinGradle {
+        diktat()
+    }
+}
+
 
 dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.12")
