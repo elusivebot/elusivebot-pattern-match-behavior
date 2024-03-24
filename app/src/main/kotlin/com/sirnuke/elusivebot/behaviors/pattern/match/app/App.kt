@@ -28,6 +28,9 @@ fun main() {
     log.info("Starting Pattern Match service")
     val config = Config { addSpec(PatternMatchSpec) }.from.env()
 
+    log.info("Starting Pattern Match; producer {} & consumer {}", config[PatternMatchSpec.Kafka.producerTopic],
+        config[PatternMatchSpec.Kafka.consumerTopic])
+
     val service = PatternMatchService.create()
 
     val running = AtomicBoolean(true)
@@ -51,7 +54,7 @@ fun main() {
 
     val producer: KafkaProducer<String, String> = KafkaProducer(producerConfig)
 
-    val consumer: KStream<String, String> = builder.stream(config[PatternMatchSpec.Kafka.consumerChannel])
+    val consumer: KStream<String, String> = builder.stream(config[PatternMatchSpec.Kafka.consumerTopic])
 
     consumer.foreach { key, raw ->
         log.info("Got input {} {}", key, raw)
@@ -61,7 +64,7 @@ fun main() {
             val response = ChatMessage(header = message.header, user = null, message = it)
             producer.send(
                 ProducerRecord(
-                    config[PatternMatchSpec.Kafka.producerChannel], key, Json.encodeToString(response)
+                    config[PatternMatchSpec.Kafka.producerTopic], key, Json.encodeToString(response)
                 )
             )
         }

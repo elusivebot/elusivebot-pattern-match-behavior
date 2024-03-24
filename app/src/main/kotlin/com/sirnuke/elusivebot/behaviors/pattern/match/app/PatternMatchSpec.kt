@@ -7,7 +7,7 @@ object PatternMatchSpec : ConfigSpec() {
 
     object Kafka : ConfigSpec() {
         val bootstrap by required<String>()
-        val producerChannel by optional("pattern-match-input")
-        val consumerChannel by optional("pattern-match-output")
+        val producerTopic by optional("pattern-match-input")
+        val consumerTopic by optional("pattern-match-output")
     }
 }
