@@ -13,6 +13,9 @@ class PatternMatchServiceImpl(configPath: String) : PatternMatchService {
     private val config: Config = Json.decodeFromString(this::class.java.getResource(configPath)!!.readText())
     private val lookup: HashMap<String, Responses> = HashMap()
 
+    @Suppress("TYPE_ALIAS")
+    private val regexes: MutableList<Pair<Regex, Responses>> = ArrayList()
+
     init {
         log.info("Loading from configuration @ {}", configPath)
         // TODO: Handle regex - can these be combined into a single string?
@@ -21,24 +24,33 @@ class PatternMatchServiceImpl(configPath: String) : PatternMatchService {
 
             entry.patterns.forEach { pattern ->
                 if (pattern.regex) {
-                    throw NotImplementedError("Regex entries aren't implemented")
+                    regexes.add(Pair(Regex(pattern.pattern), responses))
+                } else {
+                    if (lookup.containsKey(pattern.pattern)) {
+                        log.warn(
+                            "Replacing existing pattern {} from {} with one from {}",
+                            pattern.pattern,
+                            lookup[pattern.pattern]!!.id,
+                            entry.id
+                        )
+                    }
+                    lookup[pattern.pattern] = responses
                 }
-                if (lookup.containsKey(pattern.pattern)) {
-                    log.warn(
-                        "Replacing existing pattern {} from {} with one from {}",
-                        pattern.pattern,
-                        lookup[pattern.pattern]!!.id,
-                        entry.id
-                    )
-                }
-                lookup[pattern.pattern] = responses
             }
         }
     }
 
     override fun process(input: String): String? {
-        val responses = lookup[input] ?: return null
-        return responses.responses.random()
+        lookup[input]?.let {
+            return it.responses.random()
+        }
+        // TODO: Might not be a bad idea to check if multiple regexes match
+        regexes.forEach { (regex, responses) ->
+            if (regex.matches(input)) {
+                return responses.responses.random()
+            }
+        }
+        return null
     }
 
     /**
@@ -52,6 +64,7 @@ class PatternMatchServiceImpl(configPath: String) : PatternMatchService {
             }
         }
     }
+
     companion object {
         val log = LoggerFactory.getLogger(PatternMatchServiceImpl::class.java)!!
     }

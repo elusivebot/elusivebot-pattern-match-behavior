@@ -4,10 +4,8 @@
       "id": "F",
       "patterns": [
         {
-          "pattern": "F"
-        },
-        {
-          "pattern": "f"
+          "pattern": "[eE]?[fF]+$",
+          "regex": true
         }
       ],
       "responses": [
