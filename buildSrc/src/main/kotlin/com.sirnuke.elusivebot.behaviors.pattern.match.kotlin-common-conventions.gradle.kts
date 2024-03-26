@@ -1,12 +1,47 @@
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("com.diffplug.spotless")
 }
+
+group = "com.sirnuke.elusivebot"
+
+if (project.hasProperty("internalMavenURL"))
+{
+    val internalMavenUsername: String by project
+    val internalMavenPassword: String by project
+    val internalMavenURL: String by project
+
+    repositories {
+        maven {
+            credentials {
+                username = internalMavenUsername
+                password = internalMavenPassword
+            }
+            url = uri("$internalMavenURL/releases")
+            name = "Internal-Maven-Releases"
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username = internalMavenUsername
+                password = internalMavenPassword
+            }
+            url = uri("$internalMavenURL/snapshots")
+            name = "Internal-Maven-Snapshots"
+        }
+    }
+} else {
+    repositories {
+        mavenLocal()
+    }
+}
+
 
 spotless {
     kotlin {
