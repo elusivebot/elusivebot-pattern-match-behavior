@@ -46,7 +46,7 @@ class PatternMatchServiceImpl(configPath: String) : PatternMatchService {
         }
         // TODO: Might not be a bad idea to check if multiple regexes match
         regexes.forEach { (regex, responses) ->
-            if (regex.matches(input)) {
+            if (regex.containsMatchIn(input)) {
                 return responses.responses.random()
             }
         }
