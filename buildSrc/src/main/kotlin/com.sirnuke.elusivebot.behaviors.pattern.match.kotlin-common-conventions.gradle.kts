@@ -9,11 +9,10 @@ plugins {
 
 group = "com.sirnuke.elusivebot"
 
-if (project.hasProperty("internalMavenURL"))
-{
+if (project.hasProperty("internalMavenUrl")) {
     val internalMavenUsername: String by project
     val internalMavenPassword: String by project
-    val internalMavenURL: String by project
+    val internalMavenUrl: String by project
 
     repositories {
         maven {
@@ -21,7 +20,7 @@ if (project.hasProperty("internalMavenURL"))
                 username = internalMavenUsername
                 password = internalMavenPassword
             }
-            url = uri("$internalMavenURL/releases")
+            url = uri("$internalMavenUrl/releases")
             name = "Internal-Maven-Releases"
         }
     }
@@ -32,7 +31,7 @@ if (project.hasProperty("internalMavenURL"))
                 username = internalMavenUsername
                 password = internalMavenPassword
             }
-            url = uri("$internalMavenURL/snapshots")
+            url = uri("$internalMavenUrl/snapshots")
             name = "Internal-Maven-Snapshots"
         }
     }
