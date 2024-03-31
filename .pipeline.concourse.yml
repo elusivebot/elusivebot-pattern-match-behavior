@@ -1,0 +1,81 @@
+jobs:
+- name: elusivebot-pattern-match-behavior
+  plan:
+  - get: elusivebot-pattern-match-behavior-git
+    trigger: true
+  - task: build-jar
+    config:
+      platform: linux
+      caches:
+      - path: $HOME/.m2/repository
+      - path: $HOME/.gradle/caches/
+      - path: $HOME/.gradle/wrapper/
+      inputs:
+      - name: elusivebot-pattern-match-behavior-git
+      outputs:
+      - name: elusivebot-pattern-match-behavior-jar
+      image_resource:
+        name: eclipse-temurin-17-jdk
+        type: registry-image
+        source:
+          repository: eclipse-temurin
+          tag: 17-jdk
+      run:
+        path: bash
+        args: 
+        - -c
+        - |
+          set -e
+          mkdir -p $HOME/.gradle
+          touch $HOME/.gradle/gradle.properties
+          chmod 600 $HOME/.gradle/gradle.properties
+          echo "internalMavenUrl=((maven.url))" > $HOME/.gradle/gradle.properties
+          echo "internalMavenUsername=((maven.username))" >> $HOME/.gradle/gradle.properties
+          echo "internalMavenPassword=((maven.password))" >> $HOME/.gradle/gradle.properties
+          set -x
+          cd elusivebot-pattern-match-behavior-git 
+          ./gradlew distZip
+          cp Dockerfile ../elusivebot-pattern-match-behavior-jar/
+          cp app/build/distributions/app*.zip ../elusivebot-pattern-match-behavior-jar/app.zip
+  - task: build-image
+    privileged: true
+    config:
+      platform: linux
+      caches:
+      - path: cache
+      image_resource:
+        type: registry-image
+        source:
+          repository: concourse/oci-build-task
+      inputs:
+      - name: elusivebot-pattern-match-behavior-jar
+      outputs:
+      - name: image
+      params:
+        CONTEXT: elusivebot-pattern-match-behavior-jar
+        BUILD_ARG_base_filename: app
+        BUILD_ARG_jar_path: .
+      run:
+        path: build
+  - put: elusivebot-pattern-match-behavior-image
+    params:
+      image: image/image.tar
+
+
+resources:
+- name: elusivebot-pattern-match-behavior-git
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/elusivebot/elusivebot-pattern-match-behavior.git
+    username: ((github.username))
+    password: ((github.password))
+- name: elusivebot-pattern-match-behavior-image
+  type: registry-image
+  icon: docker
+  source:
+    repository: ((docker.host))/elusivebot/pattern-match
+    username: ((docker.username))
+    password: ((docker.password))
+    tag: latest
+
