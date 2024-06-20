@@ -5,7 +5,7 @@
 package com.sirnuke.elusivebot.behaviors.pattern.match.app
 
 import com.sirnuke.elusivebot.behaviors.pattern.match.lib.PatternMatchService
-import com.sirnuke.elusivebot.schema.messages.ChatMessage
+import com.sirnuke.elusivebot.schema.ChatMessage
 import com.uchuhimo.konf.Config
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
