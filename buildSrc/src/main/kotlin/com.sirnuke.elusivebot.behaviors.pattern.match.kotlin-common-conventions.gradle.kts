@@ -9,51 +9,52 @@ plugins {
 
 group = "com.sirnuke.elusivebot"
 
-if (project.hasProperty("internalMavenUrl")) {
-    val internalMavenUsername: String by project
-    val internalMavenPassword: String by project
-    val internalMavenUrl: String by project
+run {
+  if (project.hasProperty("internalMavenUrl")) {
+      val internalMavenUsername: String by project
+      val internalMavenPassword: String by project
+      val internalMavenUrl: String by project
 
-    repositories {
-        maven {
-            credentials {
-                username = internalMavenUsername
-                password = internalMavenPassword
-            }
-            url = uri("$internalMavenUrl/releases")
-            name = "Internal-Maven-Releases"
-        }
-    }
+      repositories {
+          maven {
+              credentials {
+                  username = internalMavenUsername
+                  password = internalMavenPassword
+              }
+              url = uri("$internalMavenUrl/releases")
+              name = "Internal-Maven-Releases"
+          }
+      }
 
-    repositories {
-        maven {
-            credentials {
-                username = internalMavenUsername
-                password = internalMavenPassword
-            }
-            url = uri("$internalMavenUrl/snapshots")
-            name = "Internal-Maven-Snapshots"
-        }
-    }
-} else {
-    repositories {
-        mavenLocal()
-    }
+      repositories {
+          maven {
+              credentials {
+                  username = internalMavenUsername
+                  password = internalMavenPassword
+              }
+              url = uri("$internalMavenUrl/snapshots")
+              name = "Internal-Maven-Snapshots"
+          }
+      }
+  } else {
+      repositories {
+          mavenLocal()
+      }
+  }
 }
-
 
 spotless {
     kotlin {
         diktat()
+        toggleOffOn()
     }
     kotlinGradle {
         diktat()
     }
 }
 
-
 dependencies {
-    implementation("org.slf4j:slf4j-simple:2.0.12")
+    implementation("org.slf4j:slf4j-simple:2.0.16")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
