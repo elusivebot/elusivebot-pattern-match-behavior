@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.atomic.AtomicBoolean
 
 import kotlin.concurrent.thread
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -49,4 +51,8 @@ fun main() = runBlocking {
         running.set(false)
         kafka.close()
     })
+
+    while (running.get()) {
+        delay(5.seconds)
+    }
 }
